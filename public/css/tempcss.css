@@ -1,0 +1,15 @@
+body {
+    background-color: #073b4c;
+    color: whitesmoke;
+    font-family: 'Poppins';
+}
+
+label{
+    color: #5cb85c;
+    font-weight: bolder;
+}
+
+th{
+    color: #5cb85c;
+    font-weight: bolder;
+}
