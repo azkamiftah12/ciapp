@@ -44,8 +44,16 @@ class News extends BaseController
     public function delete($id = null)
     {
         $model = new NewsModel();
-        $model->delete($id);
-        session()->setFlashdata('dangermessage', 'Data Berhasil dihapus.');
+        $data = $model->find($id);
+        $imagefile = $data['coverimg'];
+        if(file_exists("img/".$imagefile)){
+            unlink("img/".$imagefile);
+            $model->delete($id);
+            session()->setFlashdata('dangermessage', 'Data Berhasil dihapus.');
+        }else {
+            $model->delete($id);
+            session()->setFlashdata('dangermessage', 'data berhasil dihapus. Tapi file gambar tidak berhasil dihapus');
+        }
         return redirect()->route('news');
     }
 
@@ -84,6 +92,7 @@ class News extends BaseController
 
 
         $model = model(NewsModel::class);
+        
 
         $filecoverimg = $this->request->getFile('coverimg');
         //pindahkan file ke folder img yang di public
@@ -144,8 +153,14 @@ class News extends BaseController
                 . view('news/update')
                 . view('templates/footer');
         }
-
-        $filecoverimg = $this->request->getFile('coverimg');
+        $modeldelete = model(NewsModel::class);
+        $modeldelete = new NewsModel();
+        $data = $modeldelete->find($id);
+        
+        $imagefile = $data['coverimg'];
+        if(file_exists("img/".$imagefile)){
+            unlink("img/".$imagefile);
+            $filecoverimg = $this->request->getFile('coverimg');
         //pindahkan file ke folder img yang di public
         $filecoverimg->move('img');
         //ambil nama file coverimg
@@ -163,8 +178,13 @@ class News extends BaseController
         $model = model(NewsModel::class);
 
         $model->update($id, $data);
-
+            
         session()->setFlashdata('warningmessage', 'Data Berhasil Diupdate.');
+        }else {
+            session()->setFlashdata('dangermessage', 'file gambar tidak berhasil dihapus');
+        }
+
+
         return redirect()->route('news');
     }
 }
